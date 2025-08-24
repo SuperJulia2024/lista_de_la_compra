@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generar Iconos PWA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .preview {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .icon-preview {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        .icon-preview canvas {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛒 Generador de Iconos PWA</h1>
+        <p>Esta herramienta genera todos los iconos necesarios para que tu app aparezca correctamente en la pantalla de inicio del móvil.</p>
+        
+        <div class="preview">
+            <canvas id="preview" width="128" height="128"></canvas>
+            <p>Vista previa del icono</p>
+        </div>
+        
+        <button onclick="generateAllIcons()">Generar Todos los Iconos</button>
+        <button onclick="downloadZip()">Descargar ZIP</button>
+        
+        <div id="status"></div>
+        <div id="icons-container"></div>
+    </div>
+
+    <script>
+        // SVG del icono de lista de compras
+        const iconSVG = `<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="256" cy="256" r="256" fill="#4CAF50"/>
+            <g transform="translate(156, 100)">
+                <rect x="0" y="0" width="200" height="280" rx="16" fill="white" stroke="#2E7D32" stroke-width="4"/>
+                <g transform="translate(20, 40)">
+                    <circle cx="12" cy="12" r="8" fill="#4CAF50"/>
+                    <path d="M 7 12 L 10 15 L 17 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="30" y="8" width="120" height="8" rx="4" fill="#E0E0E0"/>
+                    <circle cx="12" cy="42" r="8" fill="white" stroke="#2E7D32" stroke-width="2"/>
+                    <rect x="30" y="38" width="140" height="8" rx="4" fill="#2E7D32"/>
+                    <circle cx="12" cy="72" r="8" fill="white" stroke="#2E7D32" stroke-width="2"/>
+                    <rect x="30" y="68" width="100" height="8" rx="4" fill="#2E7D32"/>
+                    <circle cx="12" cy="102" r="8" fill="white" stroke="#2E7D32" stroke-width="2"/>
+                    <rect x="30" y="98" width="130" height="8" rx="4" fill="#2E7D32"/>
+                    <circle cx="12" cy="132" r="8" fill="#4CAF50"/>
+                    <path d="M 7 132 L 10 135 L 17 128" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="30" y="128" width="90" height="8" rx="4" fill="#E0E0E0"/>
+                </g>
+            </g>
+            <g transform="translate(380, 320) rotate(45)">
+                <rect x="0" y="0" width="60" height="12" rx="6" fill="#FFC107"/>
+                <polygon points="60,0 75,6 60,12" fill="#FF9800"/>
+                <rect x="-8" y="2" width="8" height="8" rx="4" fill="#FF5722"/>
+            </g>
+            <g transform="translate(100, 350)">
+                <circle cx="25" cy="25" r="25" fill="#4CAF50"/>
+                <path d="M 15 25 L 22 32 L 35 18" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+        </svg>`;
+
+        const iconSizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        let generatedIcons = {};
+
+        // Mostrar vista previa
+        function showPreview() {
+            const canvas = document.getElementById('preview');
+            const ctx = canvas.getContext('2d');
+            
+            const img = new Image();
+            const svgBlob = new Blob([iconSVG], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(svgBlob);
+            
+            img.onload = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                URL.revokeObjectURL(url);
+            };
+            img.src = url;
+        }
+
+        // Generar un icono de tamaño específico
+        function generateIcon(size) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                
+                const img = new Image();
+                const svgBlob = new Blob([iconSVG], {type: 'image/svg+xml'});
+                const url = URL.createObjectURL(svgBlob);
+                
+                img.onload = function() {
+                    ctx.clearRect(0, 0, size, size);
+                    ctx.drawImage(img, 0, 0, size, size);
+                    
+                    canvas.toBlob((blob) => {
+                        generatedIcons[size] = blob;
+                        URL.revokeObjectURL(url);
+                        resolve(blob);
+                    }, 'image/png');
+                };
+                img.src = url;
+            });
+        }
+
+        // Generar todos los iconos
+        async function generateAllIcons() {
+            const status = document.getElementById('status');
+            const container = document.getElementById('icons-container');
+            
+            status.innerHTML = '<p>Generando iconos...</p>';
+            container.innerHTML = '';
+            
+            for (let size of iconSizes) {
+                status.innerHTML = `<p>Generando icono ${size}x${size}...</p>`;
+                
+                const blob = await generateIcon(size);
+                
+                // Crear elemento de vista previa
+                const iconDiv = document.createElement('div');
+                iconDiv.className = 'icon-preview';
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.min(size, 64);
+                canvas.height = Math.min(size, 64);
+                const ctx = canvas.getContext('2d');
+                
+                const img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                };
+                img.src = URL.createObjectURL(blob);
+                
+                const label = document.createElement('p');
+                label.textContent = `${size}x${size}`;
+                
+                const downloadBtn = document.createElement('a');
+                downloadBtn.href = URL.createObjectURL(blob);
+                downloadBtn.download = `icon-${size}x${size}.png`;
+                downloadBtn.textContent = 'Descargar';
+                downloadBtn.style.cssText = 'display:block;margin-top:5px;padding:5px 10px;background:#4CAF50;color:white;text-decoration:none;border-radius:4px;font-size:12px;';
+                
+                iconDiv.appendChild(canvas);
+                iconDiv.appendChild(label);
+                iconDiv.appendChild(downloadBtn);
+                container.appendChild(iconDiv);
+            }
+            
+            status.innerHTML = '<p>✅ ¡Todos los iconos generados correctamente!</p>';
+        }
+
+        // Descargar todos como ZIP (funcionalidad básica)
+        function downloadZip() {
+            alert('Para descargar todos los iconos, usa los botones individuales de descarga de cada tamaño.');
+        }
+
+        // Mostrar vista previa al cargar
+        window.onload = showPreview;
+    </script>
+</body>
+</html>

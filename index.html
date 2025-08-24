@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Compras</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Lista de compras compartida en tiempo real">
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Lista de Compras">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="./icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./icons/icon-16x16.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="./icons/icon96.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="./icons/icon144.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon512_maskable.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="./icons/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./icons/icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="./icons/icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="./icons/icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="./icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="./icons/icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="./icons/icon-57x57.png">
+
+    <!-- Environment Configuration -->
+    <script src="/env-config.js"></script>
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="./manifest.json">
+
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="header">
+            <h1>Mi lista de la compra</h1>
+        </div>
+
+        <!-- Authentication Section -->
+        <section id="auth-section" class="auth-section">
+            <h2>Acceso de Usuarios</h2>
+            <div class="auth-form">
+                <input type="email" id="email-input" placeholder="Correo electrónico" aria-label="Correo electrónico"
+                    required>
+                <input type="password" id="password-input" placeholder="Contraseña" aria-label="Contraseña" required>
+                <div class="auth-buttons">
+                    <!-- Botón de Registrarse eliminado -->
+                    <button id="signin-btn" class="auth-btn signin-btn">Iniciar Sesión</button>
+                </div>
+                <p id="auth-message" class="auth-message hidden" role="alert"></p>
+            </div>
+        </section>
+
+        <!-- Shopping List Section -->
+        <section id="shopping-list-section" class="shopping-list-section">
+            <div class="input-section">
+                <input type="text" id="item-input" placeholder="Añadir nuevo artículo..."
+                    aria-label="Añadir nuevo artículo">
+                <button id="add-item-btn">Añadir</button>
+            </div>
+
+            <div class="main-content">
+                <ul id="shopping-list">
+                    <!-- Items will be dynamically added here -->
+                </ul>
+                <p id="empty-list-message">Tu lista de compras está vacía. ¡Añade algo!</p>
+            </div>
+
+            <div class="footer">
+                <!-- Botón de Cerrar Sesión eliminado -->
+                <button id="clear-list-btn" class="clear-button">Borrar Lista de la compra</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title"
+        aria-describedby="modal-description">
+        <div class="modal-content">
+            <h2 id="modal-title">Confirmar Eliminación</h2>
+            <p id="modal-description">¿Estás seguro de que quieres eliminar todos los artículos de la lista de compras?
+                Esta acción no se puede deshacer.</p>
+            <div class="modal-actions">
+                <button id="cancel-delete-btn" class="button cancel">Cancelar</button>
+                <button id="confirm-delete-btn" class="button confirm">Eliminar Todo</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+</body>
+
+</html>
